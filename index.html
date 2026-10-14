@@ -167,7 +167,7 @@
 
   .row { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; min-height: 52px; }
 
-  #noBtn { font-size: .9rem; padding: 11px 24px; }
+  #noBtn { font-size: .9rem; padding: 11px 24px; white-space: nowrap; }
   #noBtn.dodging {
     position: fixed;
     z-index: 9999;
@@ -193,7 +193,7 @@
     font-size: 1.35rem;
     text-align: center;
     line-height: 1.7;
-    animation: fadeInOut 3.4s ease forwards;
+    animation: fadeInOut 3.8s ease forwards;
   }
   @keyframes fadeInOut { 0% { opacity: 0; letter-spacing: .3em; } 25%,80% { opacity: 1; letter-spacing: .05em; } 100% { opacity: 0; } }
 
@@ -331,26 +331,26 @@
   <div class="card">
     <div class="ornament">⚜ ✦ ⚜</div>
     <div class="tile"><span class="quill">🪶</span></div>
-    <h2>a royal decree for <span class="her-name"></span> is being written...</h2>
+    <h2>preparing something slightly ridiculous for <span class="her-name"></span>...</h2>
     <div class="bar"><div class="fill" id="fill"></div></div>
-    <p class="sub" id="loadText">summoning the royal scribe... 0%</p>
+    <p class="sub" id="loadText">bribing the royal scribe... 0%</p>
   </div>
 </section>
 
 <!-- 1. INTRO LINE -->
 <section class="page" id="intro">
-  <p class="intro-line">Hear ye, hear ye!<br>By order of the Royal Court of Denver,<br>in the Year of Our Lord 2026...</p>
+  <p class="intro-line">Hear ye, hear ye!<br>The Royal Court of Denver has an announcement,<br>and it's mostly about you, <span class="her-name"></span>...</p>
 </section>
 
 <!-- 2. PROCLAMATION -->
 <section class="page" id="chronicle">
   <div class="card chronicle">
     <div class="ornament">⚜ Royal Proclamation ⚜</div>
-    <h1>The Quest of the Engineer Knight</h1>
-    <p class="drop">Europe has seen bold quests: Vikings crossing the North Sea, Columbus sailing off the map, Napoleon trying to look taller. None, however, compare to an engineer knight forging an entire website instead of sending one text.</p>
-    <p>His quest: to ride forth and ask the noble <span class="her-name"></span> a single, important question.</p>
-    <p>The royal historians agree: the fate of the kingdom rests on one button...</p>
-    <button class="btn" onclick="show('ask')">enter the castle</button>
+    <h1>The Ballad of One Overly Dramatic Knight</h1>
+    <p class="drop">Legend tells of brave knights who slayed dragons, stormed castles, and crossed entire kingdoms for love. This knight faced something far scarier: texting a girl named <span class="her-name"></span>. He panicked. He built a website instead.</p>
+    <p>Royal spies report she has a dangerous smile, a suspicious amount of charm, and the power to make a grown engineer overthink a single emoji. The kingdom is concerned.</p>
+    <p>So by royal decree, this knight's fate now rests in your hands, my lady. Please be gentle. He's fragile. 🛡️</p>
+    <button class="btn" onclick="show('ask')">go on then, brave knight 😏</button>
   </div>
 </section>
 
@@ -386,6 +386,7 @@
     </div>
     <p class="greeting">My Lady <span class="her-name"></span>,</p>
     <h1>Will you go on a date with me?</h1>
+    <p class="sub">think carefully... there's only one correct answer 😌</p>
     <div class="row" id="askRow">
       <button class="btn" onclick="show('yes')">Yes ❤️</button>
       <button class="btn btn-navy" id="noBtn" type="button">No</button>
@@ -398,8 +399,8 @@
   <div class="card">
     <div class="tile">😳</div>
     <h1>Wait, you actually said yes??</h1>
-    <p class="sub">I was fully prepared for you to say no 😅<br>Ring the cathedral bells — the kingdom rejoices! 🔔</p>
-    <button class="btn btn-green" onclick="show('when')">okay okay!</button>
+    <p class="sub">I had a whole dramatic speech ready in case you said no. Guess I'll save it for someone else 😌<br>Ring the bells, the kingdom is losing its mind 🔔</p>
+    <button class="btn btn-green" onclick="show('when')">calm down, knight</button>
   </div>
 </section>
 
@@ -411,8 +412,8 @@
       <div class="tile">⏳</div>
     </div>
 
-    <h2>So... when are you free?</h2>
-    <p class="sub">name the day and hour, and the royal court shall record it</p>
+    <h2>So... when is Her Majesty free?</h2>
+    <p class="sub">pick a day and time. I'll clear my incredibly busy schedule of... absolutely nothing.</p>
 
     <div class="field">
       <label for="dateInput">Pick a Day 📅</label>
@@ -426,7 +427,7 @@
       </select>
     </div>
 
-    <button class="btn btn-wide" id="whenNext" disabled onclick="show('vibe')">set the date!</button>
+    <button class="btn btn-wide" id="whenNext" disabled onclick="show('vibe')">lock it in 🔒</button>
   </div>
 </section>
 
@@ -434,7 +435,7 @@
 <section class="page" id="vibe">
   <div class="card">
     <h2>What are we feeling?</h2>
-    <p class="sub">choose our royal quest</p>
+    <p class="sub">choose wisely. I will judge you. (lovingly)</p>
 
     <div class="grid" id="vibeGrid">
       <button class="opt" type="button" data-value="Food"><span>🍷</span>Food</button>
@@ -445,10 +446,10 @@
       <button class="opt" type="button" data-value="Other"><span>💭</span>Other</button>
     </div>
 
-    <textarea id="otherText" placeholder="tell me what you're thinking... 😊"></textarea>
+    <textarea id="otherText" placeholder="go on, surprise me... 😏"></textarea>
 
     <button class="btn btn-wide" id="vibeNext" disabled onclick="vibeContinue()">continue</button>
-    <button class="link" onclick="show('when')">go back</button>
+    <button class="link" onclick="show('when')">wait, go back</button>
   </div>
 </section>
 
@@ -456,7 +457,7 @@
 <section class="page" id="food">
   <div class="card">
     <h2>What are we eating?</h2>
-    <p class="sub">a feast worthy of Versailles</p>
+    <p class="sub">a feast worthy of Versailles (minus the guillotine)</p>
 
     <div class="grid" id="foodGrid">
       <button class="opt" type="button" data-value="American" data-emoji="🍔"><span>🍔</span>American</button>
@@ -470,7 +471,7 @@
     <p class="picked" id="foodPicked"></p>
 
     <button class="btn btn-wide" id="foodNext" disabled onclick="buildGlad(); show('glad')">continue</button>
-    <button class="link" onclick="show('vibe')">go back</button>
+    <button class="link" onclick="show('vibe')">wait, go back</button>
   </div>
 </section>
 
@@ -480,8 +481,8 @@
     <div class="ornament">⚜ ✦ ⚜</div>
     <h1>Glad you didn't say no.<span class="glad-line" id="gladLine"></span></h1>
     <p class="glad-sub" id="gladWhen"></p>
-    <p class="ps">P.S. normal people text. I made a website. the royal court is still processing this.</p>
-    <button class="btn btn-gold btn-wide" onclick="show('fee')">ok I accept</button>
+    <p class="ps">P.S. normal people just text. I built an entire kingdom. let's both pretend that's normal.</p>
+    <button class="btn btn-gold btn-wide" onclick="show('fee')">ok fine, I accept 🙄</button>
   </div>
 </section>
 
@@ -489,19 +490,19 @@
 <section class="page" id="fee">
   <div class="card">
     <div class="tile">🖋️</div>
-    <h2>One small fee</h2>
-    <p class="sub">to make this agreement official, please complete the following transaction. totally normal. even the Magna Carta did this.</p>
+    <h2>One tiny fee</h2>
+    <p class="sub">before this becomes official, there's one small transaction. totally normal. even the Magna Carta had paperwork.</p>
 
     <div class="fee-box">
       <div class="fee-top">
         <span class="fee-name">Royal Charter of the First Date</span>
         <span class="fee-price">$0</span>
       </div>
-      <div class="fee-note">one-time fee • fully refundable • approved by the crown</div>
+      <div class="fee-note">one-time fee • fully refundable • best deal in the entire kingdom</div>
     </div>
 
     <button class="btn btn-green btn-wide" id="payBtn" onclick="confirmDate()">pay $0 &amp; seal it</button>
-    <button class="link" onclick="show('glad')">go back</button>
+    <button class="link" onclick="show('glad')">having second thoughts? (you're not)</button>
   </div>
 </section>
 
@@ -510,11 +511,11 @@
   <div class="card">
     <div class="seal" id="seal">C</div>
     <h1>Charter signed &amp; sealed 👑</h1>
-    <p>Payment of $0 received. By royal decree, this date is now official.</p>
+    <p>Payment of $0 received. No refunds. (Kidding, it was free.)</p>
 
     <div class="receipt" id="receipt"></div>
 
-    <p class="sub">a copy has been delivered to the royal archives 📜<br>I have a good feeling about this ✨</p>
+    <p class="sub">a copy has been sent to the royal archives (aka my inbox) 📜<br>you're officially stuck with me for one date ✨</p>
     <div class="ornament">⚜ ✦ ⚜</div>
   </div>
 </section>
@@ -581,10 +582,13 @@
 
   function swirl() { boost = 8; }
 
-  /* ---------- Hopping "no" button ---------- */
+  /* ---------- Hopping "no" button (with teasing labels) ---------- */
   const noBtn = document.getElementById("noBtn");
   const askRow = document.getElementById("askRow");
   const EDGE = 16, TRIGGER = 100, MIN_JUMP = 180;
+  const noLabels = ["No", "are you sure?", "nice try 😏", "too slow!", "the crown forbids this", "just click yes", "I'll wait 🙂", "still no?", "okay, rude 😤"];
+  let noCount = 0;
+  let totalNoTries = 0;
 
   function askIsActive() { return document.getElementById("ask").classList.contains("active"); }
 
@@ -600,6 +604,9 @@
 
   function hop(px, py) {
     detachNoBtn();
+    noCount++;
+    totalNoTries++;
+    noBtn.textContent = noLabels[noCount % noLabels.length] || "No";
     const bw = noBtn.offsetWidth, bh = noBtn.offsetHeight;
     const maxX = Math.max(EDGE, innerWidth - bw - EDGE);
     const maxY = Math.max(EDGE, innerHeight - bh - EDGE);
@@ -618,6 +625,8 @@
     noBtn.classList.remove("dodging");
     noBtn.style.left = "";
     noBtn.style.top = "";
+    noBtn.textContent = "No";
+    noCount = 0;
     askRow.appendChild(noBtn);
   }
 
@@ -660,7 +669,7 @@
 
   /* ---------- Loading → intro → proclamation ---------- */
   (function startLoading() {
-    const msgs = ["summoning the royal scribe...", "consulting the archives...", "polishing the wax seal...", "the decree is ready!"];
+    const msgs = ["bribing the royal scribe...", "hiding my nervousness...", "practicing my royal bow...", "ready. no take-backs."];
     let pct = 0;
     const fill = document.getElementById("fill");
     const label = document.getElementById("loadText");
@@ -674,7 +683,7 @@
         clearInterval(timer);
         introTimers.push(setTimeout(() => {
           show("intro");
-          introTimers.push(setTimeout(() => show("chronicle"), 3500));
+          introTimers.push(setTimeout(() => show("chronicle"), 3900));
         }, 700));
       }
     }, 110);
@@ -758,7 +767,7 @@
       state.food = btn.dataset.value;
       state.foodEmoji = btn.dataset.emoji;
       state.other = "";
-      document.getElementById("foodPicked").textContent = "a choice worthy of the royal court 👑";
+      document.getElementById("foodPicked").textContent = "excellent taste. the crown approves 👑";
       document.getElementById("foodNext").disabled = false;
     });
   });
@@ -766,24 +775,24 @@
   /* ---------- Personalized "glad" page ---------- */
   function buildGlad() {
     const lines = {
-      Arcade: "looks like a royal tournament at the arcade 🕹️ may the best knight win",
-      Drive:  "looks like we're going on a Grand Tour 🚗 like European nobles, just with better roads",
-      Golf:   "looks like we're playing golf ⛳ the Scots invented it centuries ago and I'll still lose",
-      Hike:   "looks like we're going on an expedition 🥾 the Rockies are basically our Alps"
+      Arcade: "looks like an arcade showdown 🕹️ prepare to lose, my lady",
+      Drive:  "looks like a royal road trip 🚗 you're on music duty, don't let the kingdom down",
+      Golf:   "looks like golf ⛳ the Scots invented it, and I'll still find a way to lose to you",
+      Hike:   "looks like a hike 🥾 if I get tired, we're calling it a scenic break"
     };
 
     let line;
     if (state.activity === "Food") {
-      line = `looks like we're getting ${state.food} food ${state.foodEmoji}`;
+      line = `looks like we're getting ${state.food} food ${state.foodEmoji} and no, I'm not sharing`;
     } else if (state.activity === "Other") {
-      line = `your idea: "${state.other}" — I'm in 💭`;
+      line = `your idea: "${state.other}" — bold choice. I respect it 💭`;
     } else {
       line = lines[state.activity] || "looks like we've got plans ✨";
     }
 
     document.getElementById("gladLine").textContent = line;
     document.getElementById("gladWhen").textContent =
-      `be ready by ${state.time} on ${prettyDate(state.date)} — I'm coming to get you 🚗`;
+      `be ready by ${state.time} on ${prettyDate(state.date)}. I'm coming to get you, no excuses 🐎`;
   }
 
   /* ---------- Email notification (Web3Forms) ---------- */
@@ -806,6 +815,7 @@
         Activity: state.activity,
         "Food Choice": state.food || "N/A",
         "Her Idea": state.other || "N/A",
+        "Times She Tried To Click No": String(totalNoTries),
         "Confirmation Fee": "$0",
         "Confirmed At": new Date().toLocaleString()
       })
