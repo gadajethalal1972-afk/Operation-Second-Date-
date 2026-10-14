@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>a royal decree for you</title>
+
+<style>
+  :root {
+    --wood: #1f150c;
+    --parchment: #f4e7c9;
+    --parchment-dark: #e6d3a8;
+    --ink: #3b2716;
+    --muted: #7a6248;
+    --burgundy: #7d1f2c;
+    --gold: #b8892b;
+    --green: #3f6b3a;
+    --navy: #2b3a55;
+    --border: #c9ad78;
+    --title-font: "Cinzel", "Times New Roman", serif;
+    --body-font: "EB Garamond", Georgia, serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px 140px;
+    overflow-x: hidden;
+    font-family: var(--body-font);
+    color: var(--ink);
+    background:
+      radial-gradient(ellipse at 50% 40%, #3a2716 0%, var(--wood) 70%),
+      var(--wood);
+  }
+
+  #dust { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+  /* Castle skyline */
+  .castle {
+    position: fixed; left: 0; right: 0; bottom: 0; height: 130px; z-index: 1; pointer-events: none;
+    background: #120b06;
+    clip-path: polygon(0 100%,0 62%,4% 62%,4% 55%,6% 55%,6% 62%,8% 62%,8% 55%,10% 55%,10% 62%,12% 62%,12% 40%,14% 40%,14% 34%,15% 34%,15% 40%,17% 40%,17% 34%,18% 34%,18% 40%,20% 40%,20% 62%,30% 62%,30% 50%,32% 50%,32% 56%,34% 56%,34% 50%,36% 50%,36% 56%,38% 56%,38% 50%,40% 50%,40% 30%,42% 22%,44% 30%,44% 18%,47% 6%,50% 18%,50% 30%,52% 22%,54% 30%,54% 50%,56% 50%,56% 56%,58% 56%,58% 50%,60% 50%,60% 56%,62% 56%,62% 50%,64% 50%,64% 62%,74% 62%,74% 40%,76% 40%,76% 34%,77% 34%,77% 40%,79% 40%,79% 34%,80% 34%,80% 40%,82% 40%,82% 62%,86% 62%,86% 55%,88% 55%,88% 62%,90% 62%,90% 55%,92% 55%,92% 62%,100% 62%,100% 100%);
+  }
+  .castle-glow { position: fixed; left: 44%; bottom: 82px; width: 10px; height: 14px; z-index: 1; background: #ffcf7a; border-radius: 4px 4px 0 0; box-shadow: 0 0 14px #ffb347; animation: flicker 2.4s infinite; }
+  @keyframes flicker { 0%,100% { opacity: .9; } 45% { opacity: .55; } 60% { opacity: 1; } }
+  .flag { position: fixed; bottom: 120px; left: calc(47% - 1px); width: 2px; height: 34px; background: #2a1a0c; z-index: 1; }
+  .flag::after { content: ""; position: absolute; left: 2px; top: 0; width: 26px; height: 16px; background: #7d1f2c; clip-path: polygon(0 0,100% 0,80% 50%,100% 100%,0 100%); transform-origin: left; animation: wave 1.6s ease-in-out infinite; }
+  @keyframes wave { 50% { transform: skewY(8deg) scaleX(.85); } }
+
+  /* ---------- Pages ---------- */
+  .page { position: relative; z-index: 2; display: none; width: 100%; max-width: 500px; }
+  .page.active { display: block; animation: unroll .8s cubic-bezier(.2,.8,.3,1) both; }
+
+  @keyframes unroll {
+    from { opacity: 0; transform: scaleY(.15) rotateX(40deg); filter: sepia(1) blur(6px); }
+    to   { opacity: 1; transform: scaleY(1) rotateX(0); filter: none; }
+  }
+
+  .card {
+    position: relative;
+    background:
+      radial-gradient(ellipse at 30% 20%, rgba(255,255,255,.35), transparent 60%),
+      radial-gradient(ellipse at 80% 90%, rgba(150,110,50,.18), transparent 60%),
+      var(--parchment);
+    border-radius: 6px;
+    padding: 38px 28px 32px;
+    text-align: center;
+    box-shadow:
+      inset 0 0 60px rgba(120,80,30,.35),
+      0 20px 60px rgba(0,0,0,.6);
+    outline: 2px solid var(--border);
+    outline-offset: -12px;
+    animation: sway 6s ease-in-out infinite;
+  }
+
+  .card::before, .card::after {
+    content: "";
+    position: absolute;
+    left: -10px; right: -10px;
+    height: 16px;
+    border-radius: 10px;
+    background: linear-gradient(to bottom, #8a5a2b, #5a3714 60%, #3d2410);
+    box-shadow: 0 4px 10px rgba(0,0,0,.5);
+  }
+  .card::before { top: -10px; }
+  .card::after  { bottom: -10px; }
+
+  @keyframes sway { 50% { transform: translateY(-5px) rotate(-.3deg); } }
+
+  .ornament {
+    color: var(--gold);
+    font-size: 1.1rem;
+    letter-spacing: 8px;
+    margin-bottom: 14px;
+  }
+
+  .tile {
+    width: 92px; height: 104px;
+    margin: 0 auto 18px;
+    border-radius: 12px 12px 50% 50% / 12px 12px 60% 60%;
+    display: grid; place-items: center;
+    font-size: 2.8rem;
+    overflow: hidden;
+    background: var(--parchment-dark);
+    border: 3px double var(--gold);
+    box-shadow: inset 0 0 18px rgba(120,80,30,.35);
+  }
+
+  .tile.monkey { width: 120px; height: 128px; padding: 6px; background: radial-gradient(circle, #efdcb2, #d9c08a); }
+  .tile.monkey svg { animation: monkeyBob 2.2s ease-in-out infinite; }
+  .tile.monkey .eye { transform-origin: center; transform-box: fill-box; animation: blink 4s infinite; }
+  @keyframes monkeyBob { 50% { transform: translateY(-3px) rotate(-4deg); } }
+  @keyframes blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(.1); } }
+
+  h1, h2 {
+    font-family: var(--title-font);
+    font-weight: 700;
+    color: var(--burgundy);
+    line-height: 1.3;
+    letter-spacing: .02em;
+  }
+  h1 { font-size: 1.6rem; margin-bottom: 16px; }
+  h2 { font-size: 1.35rem; margin-bottom: 10px; }
+
+  p { line-height: 1.6; margin-bottom: 18px; font-size: 1.12rem; }
+  .sub { color: var(--muted); font-size: 1.08rem; font-style: italic; margin-bottom: 20px; }
+  .ps { font-style: italic; font-size: 1rem; color: var(--muted); }
+  .greeting { font-family: var(--title-font); font-size: 1.15rem; color: var(--navy); margin-bottom: 6px; }
+  .glad-line { display: block; margin-top: 10px; font-family: var(--body-font); font-size: 1.2rem; font-weight: 600; color: var(--ink); }
+  .glad-sub { color: var(--navy); font-size: 1.1rem; font-weight: 600; margin-bottom: 14px; }
+
+  .drop::first-letter {
+    float: left;
+    font-family: var(--title-font);
+    font-size: 3rem;
+    line-height: .9;
+    padding: 4px 6px 0 0;
+    color: var(--burgundy);
+  }
+
+  .btn {
+    border: 0; cursor: pointer;
+    font-family: var(--title-font);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    color: #fbefd5;
+    padding: 13px 30px;
+    border-radius: 999px;
+    background: radial-gradient(circle at 35% 30%, #a83444, var(--burgundy) 60%, #561421);
+    box-shadow: 0 4px 0 #4a111c, 0 8px 18px rgba(0,0,0,.35);
+    transition: transform .15s ease, box-shadow .2s ease, opacity .2s;
+  }
+  .btn:hover { transform: translateY(-2px); }
+  .btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #4a111c, 0 4px 10px rgba(0,0,0,.35); }
+  .btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+
+  .btn-gold  { background: radial-gradient(circle at 35% 30%, #d6a845, var(--gold) 60%, #7d5a17); box-shadow: 0 4px 0 #5e4310, 0 8px 18px rgba(0,0,0,.35); color: #2a1a08; }
+  .btn-green { background: radial-gradient(circle at 35% 30%, #5d8f57, var(--green) 60%, #26431f); box-shadow: 0 4px 0 #1f3719, 0 8px 18px rgba(0,0,0,.35); }
+  .btn-navy  { background: radial-gradient(circle at 35% 30%, #46597d, var(--navy) 60%, #1a2438); box-shadow: 0 4px 0 #141c2c, 0 8px 18px rgba(0,0,0,.35); }
+  .btn-wide { width: 100%; padding: 15px; }
+
+  .row { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; min-height: 52px; }
+
+  #noBtn { font-size: .9rem; padding: 11px 24px; }
+  #noBtn.dodging {
+    position: fixed;
+    z-index: 9999;
+    margin: 0;
+    transition: left .22s cubic-bezier(.3,1.6,.5,1), top .22s cubic-bezier(.3,1.6,.5,1);
+  }
+
+  .link {
+    display: inline-block; margin-top: 14px;
+    background: none; border: 0; cursor: pointer;
+    font-family: var(--body-font); color: var(--muted); font-size: 1rem; font-style: italic;
+  }
+  .link:hover { color: var(--ink); text-decoration: underline; }
+
+  .quill { display: inline-block; animation: write 1s ease-in-out infinite; }
+  @keyframes write { 0%,100% { transform: rotate(-10deg) translateX(-4px); } 50% { transform: rotate(8deg) translateX(4px); } }
+  .bar { height: 6px; background: rgba(120,80,30,.2); border-radius: 99px; overflow: hidden; margin: 18px 0 10px; }
+  .fill { height: 100%; width: 0; background: linear-gradient(90deg, var(--ink), var(--burgundy)); transition: width .12s linear; }
+
+  .intro-line {
+    color: var(--parchment);
+    font-family: var(--title-font);
+    font-size: 1.35rem;
+    text-align: center;
+    line-height: 1.7;
+    animation: fadeInOut 3.4s ease forwards;
+  }
+  @keyframes fadeInOut { 0% { opacity: 0; letter-spacing: .3em; } 25%,80% { opacity: 1; letter-spacing: .05em; } 100% { opacity: 0; } }
+
+  .chronicle p { text-align: left; opacity: 0; animation: ink 1s ease forwards; }
+  .chronicle p:nth-of-type(1) { animation-delay: .3s; }
+  .chronicle p:nth-of-type(2) { animation-delay: 1.8s; }
+  .chronicle p:nth-of-type(3) { animation-delay: 3.3s; }
+  .chronicle .btn { opacity: 0; animation: ink 1s ease 4.6s forwards; }
+  @keyframes ink { from { opacity: 0; filter: blur(4px); transform: translateY(6px); } to { opacity: 1; filter: none; transform: none; } }
+
+  .tile-pair { display: flex; gap: 14px; justify-content: center; margin-bottom: 18px; }
+  .tile-pair .tile { margin: 0; width: 72px; height: 72px; font-size: 2.1rem; }
+
+  .field { text-align: left; margin-bottom: 18px; }
+  .field label { display: block; font-family: var(--title-font); font-weight: 700; margin-bottom: 8px; font-size: .95rem; color: var(--ink); }
+  .field input, .field select {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 6px;
+    border: 2px solid var(--border);
+    background: #fbf3df;
+    color: var(--ink);
+    font-family: var(--body-font);
+    font-size: 1.1rem;
+    outline: none;
+    cursor: pointer;
+  }
+  .field input:focus, .field select:focus { border-color: var(--burgundy); box-shadow: 0 0 10px rgba(125,31,44,.25); }
+
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 18px; }
+  .opt {
+    background: #fbf3df;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 6px 12px;
+    cursor: pointer;
+    font-family: var(--title-font); font-size: .9rem; font-weight: 700; color: var(--ink);
+    transition: transform .15s, border-color .2s, box-shadow .2s, background .2s;
+    opacity: 0;
+    animation: stamp .45s ease forwards;
+  }
+  .opt span { display: block; font-size: 1.9rem; margin-bottom: 8px; transition: transform .2s; }
+  .opt:hover { transform: translateY(-3px); border-color: var(--burgundy); }
+  .opt:hover span { transform: scale(1.15) rotate(-6deg); }
+  .opt.selected {
+    border-color: var(--burgundy);
+    background: #f6dcc9;
+    box-shadow: 0 0 0 3px rgba(125,31,44,.25);
+  }
+
+  .grid .opt:nth-child(1) { animation-delay: .05s; }
+  .grid .opt:nth-child(2) { animation-delay: .12s; }
+  .grid .opt:nth-child(3) { animation-delay: .19s; }
+  .grid .opt:nth-child(4) { animation-delay: .26s; }
+  .grid .opt:nth-child(5) { animation-delay: .33s; }
+  .grid .opt:nth-child(6) { animation-delay: .40s; }
+
+  @keyframes stamp {
+    0%   { opacity: 0; transform: scale(1.4) rotate(-6deg); }
+    70%  { opacity: 1; transform: scale(.95); }
+    100% { opacity: 1; transform: none; }
+  }
+
+  textarea {
+    display: none;
+    width: 100%; min-height: 90px;
+    margin-bottom: 18px; padding: 12px 14px;
+    border: 2px solid var(--border); border-radius: 6px;
+    background: #fbf3df;
+    font-family: var(--body-font); font-size: 1.1rem; color: var(--ink);
+    resize: vertical; outline: none;
+  }
+  textarea:focus { border-color: var(--burgundy); }
+  textarea.show { display: block; animation: ink .4s ease both; }
+
+  .picked { min-height: 22px; color: var(--burgundy); font-style: italic; margin-bottom: 14px; }
+
+  .fee-box {
+    border: 2px dashed var(--border); border-radius: 6px;
+    padding: 18px; margin: 6px 0 22px; text-align: left;
+    background: #fbf3df;
+  }
+  .fee-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .fee-name { font-family: var(--title-font); font-weight: 700; }
+  .fee-price { font-family: var(--title-font); font-size: 1.8rem; font-weight: 700; color: var(--green); }
+  .fee-note { text-align: center; font-size: .95rem; color: var(--muted); font-style: italic; }
+
+  .seal {
+    width: 84px; height: 84px; margin: 0 auto 16px;
+    border-radius: 50%;
+    display: grid; place-items: center;
+    font-family: var(--title-font); font-weight: 700; font-size: 1.6rem;
+    color: #f6d9b8;
+    background: radial-gradient(circle at 35% 30%, #b13a4b, var(--burgundy) 55%, #4f101b);
+    box-shadow: 0 6px 14px rgba(0,0,0,.4), inset 0 0 0 6px rgba(0,0,0,.12);
+    animation: sealDrop .7s cubic-bezier(.3,1.6,.5,1) both;
+  }
+  @keyframes sealDrop { from { transform: scale(2.2) rotate(-25deg); opacity: 0; } to { transform: none; opacity: 1; } }
+
+  .receipt {
+    text-align: left;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 4px;
+    margin: 4px 0 18px;
+    font-size: 1.05rem;
+  }
+  .receipt div { display: flex; justify-content: space-between; gap: 12px; padding: 4px 0; }
+  .receipt span:first-child { color: var(--muted); font-style: italic; }
+  .receipt span:last-child { text-align: right; font-weight: 600; }
+
+  .confetti { position: fixed; top: -30px; pointer-events: none; z-index: 99; animation: fall linear forwards; }
+  @keyframes fall { to { transform: translateY(110vh) rotate(540deg); opacity: .3; } }
+
+  @media (max-width: 420px) {
+    .card { padding: 32px 18px 28px; }
+    h1 { font-size: 1.35rem; }
+    h2 { font-size: 1.15rem; }
+    .btn { font-size: .9rem; }
+    .grid { gap: 9px; }
+    .opt { font-size: .78rem; padding: 14px 4px 10px; }
+  }
+</style>
+</head>
+
+<body>
+
+<canvas id="dust"></canvas>
+<div class="castle"></div>
+<div class="castle-glow"></div>
+<div class="flag"></div>
+
+<!-- 0. LOADING -->
+<section class="page active" id="loading">
+  <div class="card">
+    <div class="ornament">⚜ ✦ ⚜</div>
+    <div class="tile"><span class="quill">🪶</span></div>
+    <h2>a royal decree for <span class="her-name"></span> is being written...</h2>
+    <div class="bar"><div class="fill" id="fill"></div></div>
+    <p class="sub" id="loadText">summoning the royal scribe... 0%</p>
+  </div>
+</section>
+
+<!-- 1. INTRO LINE -->
+<section class="page" id="intro">
+  <p class="intro-line">Hear ye, hear ye!<br>By order of the Royal Court of Denver,<br>in the Year of Our Lord 2026...</p>
+</section>
+
+<!-- 2. PROCLAMATION -->
+<section class="page" id="chronicle">
+  <div class="card chronicle">
+    <div class="ornament">⚜ Royal Proclamation ⚜</div>
+    <h1>The Quest of the Engineer Knight</h1>
+    <p class="drop">Europe has seen bold quests: Vikings crossing the North Sea, Columbus sailing off the map, Napoleon trying to look taller. None, however, compare to an engineer knight forging an entire website instead of sending one text.</p>
+    <p>His quest: to ride forth and ask the noble <span class="her-name"></span> a single, important question.</p>
+    <p>The royal historians agree: the fate of the kingdom rests on one button...</p>
+    <button class="btn" onclick="show('ask')">enter the castle</button>
+  </div>
+</section>
+
+<!-- 3. THE QUESTION -->
+<section class="page" id="ask">
+  <div class="card">
+    <div class="tile monkey">
+      <svg viewBox="0 0 100 100" width="100%" height="100%" aria-label="smiling monkey">
+        <circle cx="16" cy="48" r="13" fill="#8b5a2b"/>
+        <circle cx="16" cy="48" r="7"  fill="#f2c9a0"/>
+        <circle cx="84" cy="48" r="13" fill="#8b5a2b"/>
+        <circle cx="84" cy="48" r="7"  fill="#f2c9a0"/>
+        <circle cx="50" cy="50" r="34" fill="#8b5a2b"/>
+        <ellipse cx="50" cy="58" rx="25" ry="22" fill="#f2c9a0"/>
+        <ellipse cx="38" cy="42" rx="11" ry="12" fill="#f2c9a0"/>
+        <ellipse cx="62" cy="42" rx="11" ry="12" fill="#f2c9a0"/>
+        <circle class="eye" cx="39" cy="43" r="4" fill="#2b1a0e"/>
+        <circle class="eye" cx="61" cy="43" r="4" fill="#2b1a0e"/>
+        <circle cx="40.5" cy="41.5" r="1.3" fill="#fff"/>
+        <circle cx="62.5" cy="41.5" r="1.3" fill="#fff"/>
+        <ellipse cx="31" cy="58" rx="5" ry="3" fill="#ff8a8a" opacity=".55"/>
+        <ellipse cx="69" cy="58" rx="5" ry="3" fill="#ff8a8a" opacity=".55"/>
+        <ellipse cx="46" cy="55" rx="1.8" ry="1.3" fill="#5a3618"/>
+        <ellipse cx="54" cy="55" rx="1.8" ry="1.3" fill="#5a3618"/>
+        <path d="M36 62 Q50 78 64 62 Q50 70 36 62 Z" fill="#5a1f1f"/>
+        <path d="M42 67 Q50 72 58 67 Q50 69 42 67 Z" fill="#ff7a8a"/>
+        <path d="M30 24 L30 8 L38 16 L44 4 L50 14 L56 4 L62 16 L70 8 L70 24 Z" fill="#d6a845" stroke="#7d5a17" stroke-width="1.2"/>
+        <rect x="30" y="20" width="40" height="5" fill="#b8892b"/>
+        <circle cx="50" cy="22.5" r="2" fill="#7d1f2c"/>
+        <circle cx="40" cy="22.5" r="1.5" fill="#2b3a55"/>
+        <circle cx="60" cy="22.5" r="1.5" fill="#2b3a55"/>
+      </svg>
+    </div>
+    <p class="greeting">My Lady <span class="her-name"></span>,</p>
+    <h1>Will you go on a date with me?</h1>
+    <div class="row" id="askRow">
+      <button class="btn" onclick="show('yes')">Yes ❤️</button>
+      <button class="btn btn-navy" id="noBtn" type="button">No</button>
+    </div>
+  </div>
+</section>
+
+<!-- 4. WAIT YOU SAID YES -->
+<section class="page" id="yes">
+  <div class="card">
+    <div class="tile">😳</div>
+    <h1>Wait, you actually said yes??</h1>
+    <p class="sub">I was fully prepared for you to say no 😅<br>Ring the cathedral bells — the kingdom rejoices! 🔔</p>
+    <button class="btn btn-green" onclick="show('when')">okay okay!</button>
+  </div>
+</section>
+
+<!-- 5. WHEN ARE YOU FREE -->
+<section class="page" id="when">
+  <div class="card">
+    <div class="tile-pair">
+      <div class="tile">🏰</div>
+      <div class="tile">⏳</div>
+    </div>
+
+    <h2>So... when are you free?</h2>
+    <p class="sub">name the day and hour, and the royal court shall record it</p>
+
+    <div class="field">
+      <label for="dateInput">Pick a Day 📅</label>
+      <input type="date" id="dateInput">
+    </div>
+
+    <div class="field">
+      <label for="timeInput">What Time? 🕰️</label>
+      <select id="timeInput">
+        <option value="">Select a time...</option>
+      </select>
+    </div>
+
+    <button class="btn btn-wide" id="whenNext" disabled onclick="show('vibe')">set the date!</button>
+  </div>
+</section>
+
+<!-- 6. PICK A VIBE -->
+<section class="page" id="vibe">
+  <div class="card">
+    <h2>What are we feeling?</h2>
+    <p class="sub">choose our royal quest</p>
+
+    <div class="grid" id="vibeGrid">
+      <button class="opt" type="button" data-value="Food"><span>🍷</span>Food</button>
+      <button class="opt" type="button" data-value="Arcade"><span>🕹️</span>Arcade</button>
+      <button class="opt" type="button" data-value="Drive"><span>🚗</span>Drive</button>
+      <button class="opt" type="button" data-value="Golf"><span>⛳</span>Golf</button>
+      <button class="opt" type="button" data-value="Hike"><span>🥾</span>Hike</button>
+      <button class="opt" type="button" data-value="Other"><span>💭</span>Other</button>
+    </div>
+
+    <textarea id="otherText" placeholder="tell me what you're thinking... 😊"></textarea>
+
+    <button class="btn btn-wide" id="vibeNext" disabled onclick="vibeContinue()">continue</button>
+    <button class="link" onclick="show('when')">go back</button>
+  </div>
+</section>
+
+<!-- 7. FOOD OPTIONS -->
+<section class="page" id="food">
+  <div class="card">
+    <h2>What are we eating?</h2>
+    <p class="sub">a feast worthy of Versailles</p>
+
+    <div class="grid" id="foodGrid">
+      <button class="opt" type="button" data-value="American" data-emoji="🍔"><span>🍔</span>American</button>
+      <button class="opt" type="button" data-value="Indian" data-emoji="🍛"><span>🍛</span>Indian</button>
+      <button class="opt" type="button" data-value="Japanese" data-emoji="🍣"><span>🍣</span>Japanese</button>
+      <button class="opt" type="button" data-value="Chinese" data-emoji="🥡"><span>🥡</span>Chinese</button>
+      <button class="opt" type="button" data-value="Mexican" data-emoji="🌮"><span>🌮</span>Mexican</button>
+      <button class="opt" type="button" data-value="Italian" data-emoji="🍝"><span>🍝</span>Italian</button>
+    </div>
+
+    <p class="picked" id="foodPicked"></p>
+
+    <button class="btn btn-wide" id="foodNext" disabled onclick="buildGlad(); show('glad')">continue</button>
+    <button class="link" onclick="show('vibe')">go back</button>
+  </div>
+</section>
+
+<!-- 8. GLAD YOU DIDN'T SAY NO -->
+<section class="page" id="glad">
+  <div class="card">
+    <div class="ornament">⚜ ✦ ⚜</div>
+    <h1>Glad you didn't say no.<span class="glad-line" id="gladLine"></span></h1>
+    <p class="glad-sub" id="gladWhen"></p>
+    <p class="ps">P.S. normal people text. I made a website. the royal court is still processing this.</p>
+    <button class="btn btn-gold btn-wide" onclick="show('fee')">ok I accept</button>
+  </div>
+</section>
+
+<!-- 9. ONE SMALL FEE -->
+<section class="page" id="fee">
+  <div class="card">
+    <div class="tile">🖋️</div>
+    <h2>One small fee</h2>
+    <p class="sub">to make this agreement official, please complete the following transaction. totally normal. even the Magna Carta did this.</p>
+
+    <div class="fee-box">
+      <div class="fee-top">
+        <span class="fee-name">Royal Charter of the First Date</span>
+        <span class="fee-price">$0</span>
+      </div>
+      <div class="fee-note">one-time fee • fully refundable • approved by the crown</div>
+    </div>
+
+    <button class="btn btn-green btn-wide" id="payBtn" onclick="confirmDate()">pay $0 &amp; seal it</button>
+    <button class="link" onclick="show('glad')">go back</button>
+  </div>
+</section>
+
+<!-- 10. CONFIRMED -->
+<section class="page" id="done">
+  <div class="card">
+    <div class="seal" id="seal">C</div>
+    <h1>Charter signed &amp; sealed 👑</h1>
+    <p>Payment of $0 received. By royal decree, this date is now official.</p>
+
+    <div class="receipt" id="receipt"></div>
+
+    <p class="sub">a copy has been delivered to the royal archives 📜<br>I have a good feeling about this ✨</p>
+    <div class="ornament">⚜ ✦ ⚜</div>
+  </div>
+</section>
+
+<script>
+  /* ===== SETTINGS ===== */
+  const HER_NAME = "Caitlyn";
+  const WEB3FORMS_KEY = "bda4e229-b1af-4745-9e47-479954f8e3ae";
+
+  (function () {
+    const l = document.createElement("link");
+    l.rel = "stylesheet";
+    l.href = "https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap";
+    document.head.appendChild(l);
+  })();
+
+  const state = { date: "", time: "", activity: "", food: "", foodEmoji: "", other: "" };
+
+  document.querySelectorAll(".her-name").forEach(el => el.textContent = HER_NAME);
+  document.getElementById("seal").textContent = HER_NAME.charAt(0).toUpperCase();
+
+  /* ---------- Floating candle-light particles ---------- */
+  const canvas = document.getElementById("dust");
+  const ctx = canvas.getContext("2d");
+  let W, H, motes = [];
+
+  function resize() { W = canvas.width = innerWidth; H = canvas.height = innerHeight; }
+  resize();
+  addEventListener("resize", resize);
+
+  for (let i = 0; i < 90; i++) {
+    motes.push({
+      x: Math.random() * innerWidth,
+      y: Math.random() * innerHeight,
+      r: Math.random() * 2.2 + .6,
+      vx: (Math.random() - .5) * .25,
+      vy: -(Math.random() * .35 + .08),
+      a: Math.random() * .5 + .2,
+      t: Math.random() * Math.PI * 2
+    });
+  }
+
+  let boost = 1;
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    boost += (1 - boost) * 0.04;
+    for (const m of motes) {
+      m.t += .02;
+      m.x += m.vx * boost + Math.sin(m.t) * .15;
+      m.y += m.vy * boost;
+      if (m.y < -10) { m.y = H + 10; m.x = Math.random() * W; }
+      if (m.x < -10) m.x = W + 10;
+      if (m.x > W + 10) m.x = -10;
+      ctx.beginPath();
+      ctx.arc(m.x, m.y, m.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255, 210, 140, ${m.a * (0.7 + 0.3 * Math.sin(m.t))})`;
+      ctx.shadowColor = "rgba(255, 190, 110, .8)";
+      ctx.shadowBlur = 8;
+      ctx.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+
+  function swirl() { boost = 8; }
+
+  /* ---------- Hopping "no" button ---------- */
+  const noBtn = document.getElementById("noBtn");
+  const askRow = document.getElementById("askRow");
+  const EDGE = 16, TRIGGER = 100, MIN_JUMP = 180;
+
+  function askIsActive() { return document.getElementById("ask").classList.contains("active"); }
+
+  function detachNoBtn() {
+    if (noBtn.classList.contains("dodging")) return;
+    const r = noBtn.getBoundingClientRect();
+    document.body.appendChild(noBtn);
+    noBtn.classList.add("dodging");
+    noBtn.style.left = r.left + "px";
+    noBtn.style.top = r.top + "px";
+    void noBtn.offsetWidth;
+  }
+
+  function hop(px, py) {
+    detachNoBtn();
+    const bw = noBtn.offsetWidth, bh = noBtn.offsetHeight;
+    const maxX = Math.max(EDGE, innerWidth - bw - EDGE);
+    const maxY = Math.max(EDGE, innerHeight - bh - EDGE);
+    let x, y, tries = 0;
+    do {
+      x = EDGE + Math.random() * (maxX - EDGE);
+      y = EDGE + Math.random() * (maxY - EDGE);
+      tries++;
+    } while (Math.hypot(x + bw / 2 - px, y + bh / 2 - py) < MIN_JUMP && tries < 40);
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
+  }
+
+  function resetNoBtn() {
+    if (!noBtn.classList.contains("dodging")) return;
+    noBtn.classList.remove("dodging");
+    noBtn.style.left = "";
+    noBtn.style.top = "";
+    askRow.appendChild(noBtn);
+  }
+
+  document.addEventListener("mousemove", e => {
+    if (!askIsActive()) return;
+    const r = noBtn.getBoundingClientRect();
+    const dist = Math.hypot(e.clientX - (r.left + r.width / 2), e.clientY - (r.top + r.height / 2));
+    if (dist < TRIGGER) hop(e.clientX, e.clientY);
+  });
+
+  noBtn.addEventListener("touchstart", e => {
+    e.preventDefault();
+    const t = e.touches[0];
+    hop(t.clientX, t.clientY);
+  }, { passive: false });
+
+  noBtn.addEventListener("click", e => {
+    e.preventDefault();
+    hop(e.clientX, e.clientY);
+  });
+
+  addEventListener("resize", () => {
+    if (!noBtn.classList.contains("dodging")) return;
+    const maxX = innerWidth - noBtn.offsetWidth - EDGE;
+    const maxY = innerHeight - noBtn.offsetHeight - EDGE;
+    noBtn.style.left = Math.max(EDGE, Math.min(parseFloat(noBtn.style.left), maxX)) + "px";
+    noBtn.style.top = Math.max(EDGE, Math.min(parseFloat(noBtn.style.top), maxY)) + "px";
+  });
+
+  /* ---------- Navigation ---------- */
+  let introTimers = [];
+  function show(id) {
+    if (id !== "intro" && id !== "chronicle") { introTimers.forEach(clearTimeout); introTimers = []; }
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+    scrollTo(0, 0);
+    swirl();
+    resetNoBtn();
+  }
+
+  /* ---------- Loading → intro → proclamation ---------- */
+  (function startLoading() {
+    const msgs = ["summoning the royal scribe...", "consulting the archives...", "polishing the wax seal...", "the decree is ready!"];
+    let pct = 0;
+    const fill = document.getElementById("fill");
+    const label = document.getElementById("loadText");
+
+    const timer = setInterval(() => {
+      pct = Math.min(100, pct + Math.floor(Math.random() * 7) + 3);
+      fill.style.width = pct + "%";
+      label.textContent = msgs[Math.min(3, Math.floor(pct / 26))] + " " + pct + "%";
+
+      if (pct === 100) {
+        clearInterval(timer);
+        introTimers.push(setTimeout(() => {
+          show("intro");
+          introTimers.push(setTimeout(() => show("chronicle"), 3500));
+        }, 700));
+      }
+    }, 110);
+  })();
+
+  /* ---------- Date + time (30-minute steps) ---------- */
+  const dateInput = document.getElementById("dateInput");
+  const timeInput = document.getElementById("timeInput");
+  const whenNext = document.getElementById("whenNext");
+
+  const today = new Date();
+  dateInput.min = new Date(today.getTime() - today.getTimezoneOffset() * 60000).toISOString().split("T")[0];
+
+  for (let mins = 10 * 60; mins <= 21 * 60; mins += 30) {
+    const h24 = Math.floor(mins / 60), m = mins % 60;
+    const h12 = ((h24 + 11) % 12) + 1;
+    const label = `${h12}:${m === 0 ? "00" : "30"} ${h24 < 12 ? "AM" : "PM"}`;
+    const opt = document.createElement("option");
+    opt.value = label;
+    opt.textContent = label;
+    timeInput.appendChild(opt);
+  }
+
+  function checkWhen() {
+    state.date = dateInput.value;
+    state.time = timeInput.value;
+    whenNext.disabled = !(state.date && state.time);
+  }
+  ["change", "input"].forEach(ev => {
+    dateInput.addEventListener(ev, checkWhen);
+    timeInput.addEventListener(ev, checkWhen);
+  });
+
+  function prettyDate(value) {
+    if (!value) return "";
+    return new Date(value + "T00:00").toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+  }
+
+  /* ---------- Vibe selection ---------- */
+  const otherBox = document.getElementById("otherText");
+  const vibeNext = document.getElementById("vibeNext");
+
+  document.querySelectorAll("#vibeGrid .opt").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("#vibeGrid .opt").forEach(b => b.classList.remove("selected"));
+      btn.classList.add("selected");
+      state.activity = btn.dataset.value;
+
+      if (state.activity === "Other") {
+        otherBox.classList.add("show");
+        otherBox.focus();
+        vibeNext.disabled = otherBox.value.trim() === "";
+      } else {
+        otherBox.classList.remove("show");
+        vibeNext.disabled = false;
+      }
+    });
+  });
+
+  otherBox.addEventListener("input", () => {
+    if (state.activity === "Other") vibeNext.disabled = otherBox.value.trim() === "";
+  });
+
+  function vibeContinue() {
+    if (state.activity === "Food") {
+      show("food");
+    } else {
+      state.food = "";
+      state.foodEmoji = "";
+      state.other = state.activity === "Other" ? otherBox.value.trim() : "";
+      buildGlad();
+      show("glad");
+    }
+  }
+
+  /* ---------- Food selection ---------- */
+  document.querySelectorAll("#foodGrid .opt").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("#foodGrid .opt").forEach(b => b.classList.remove("selected"));
+      btn.classList.add("selected");
+      state.food = btn.dataset.value;
+      state.foodEmoji = btn.dataset.emoji;
+      state.other = "";
+      document.getElementById("foodPicked").textContent = "a choice worthy of the royal court 👑";
+      document.getElementById("foodNext").disabled = false;
+    });
+  });
+
+  /* ---------- Personalized "glad" page ---------- */
+  function buildGlad() {
+    const lines = {
+      Arcade: "looks like a royal tournament at the arcade 🕹️ may the best knight win",
+      Drive:  "looks like we're going on a Grand Tour 🚗 like European nobles, just with better roads",
+      Golf:   "looks like we're playing golf ⛳ the Scots invented it centuries ago and I'll still lose",
+      Hike:   "looks like we're going on an expedition 🥾 the Rockies are basically our Alps"
+    };
+
+    let line;
+    if (state.activity === "Food") {
+      line = `looks like we're getting ${state.food} food ${state.foodEmoji}`;
+    } else if (state.activity === "Other") {
+      line = `your idea: "${state.other}" — I'm in 💭`;
+    } else {
+      line = lines[state.activity] || "looks like we've got plans ✨";
+    }
+
+    document.getElementById("gladLine").textContent = line;
+    document.getElementById("gladWhen").textContent =
+      `be ready by ${state.time} on ${prettyDate(state.date)} — I'm coming to get you 🚗`;
+  }
+
+  /* ---------- Email notification (Web3Forms) ---------- */
+  async function sendConfirmation() {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
+
+    const res = await fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      signal: controller.signal,
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify({
+        access_key: WEB3FORMS_KEY,
+        subject: `${HER_NAME} said YES ❤️ Date Confirmed`,
+        from_name: "Date Website",
+        Name: HER_NAME,
+        Status: "CONFIRMED — paid $0",
+        Date: prettyDate(state.date),
+        Time: state.time,
+        Activity: state.activity,
+        "Food Choice": state.food || "N/A",
+        "Her Idea": state.other || "N/A",
+        "Confirmation Fee": "$0",
+        "Confirmed At": new Date().toLocaleString()
+      })
+    });
+    clearTimeout(timeout);
+
+    const data = await res.json().catch(() => ({}));
+    if (!data.success) throw new Error(data.message || "Email failed to send");
+    console.log("Confirmation email sent ✅");
+  }
+
+  function buildReceipt() {
+    const rows = [
+      ["Name", HER_NAME],
+      ["Date", prettyDate(state.date)],
+      ["Time", state.time],
+      ["Royal quest", state.activity],
+    ];
+    if (state.food) rows.push(["Feast", `${state.food} ${state.foodEmoji}`]);
+    if (state.other) rows.push(["Her idea", state.other]);
+    rows.push(["Amount paid", "$0.00"]);
+
+    const box = document.getElementById("receipt");
+    box.innerHTML = "";
+    rows.forEach(([k, v]) => {
+      const row = document.createElement("div");
+      const a = document.createElement("span");
+      const b = document.createElement("span");
+      a.textContent = k;
+      b.textContent = v;
+      row.append(a, b);
+      box.appendChild(row);
+    });
+  }
+
+  async function confirmDate() {
+    const btn = document.getElementById("payBtn");
+    if (btn.disabled) return;
+    btn.disabled = true;
+    btn.textContent = "sealing the charter...";
+
+    try {
+      await sendConfirmation();
+    } catch (e) {
+      console.error("Confirmation email failed:", e);
+    }
+
+    buildReceipt();
+    show("done");
+    celebrate();
+  }
+
+  /* ---------- Celebration ---------- */
+  function celebrate() {
+    const bits = ["👑", "🌹", "⚜️", "✨", "🏰"];
+    for (let i = 0; i < 70; i++) {
+      const c = document.createElement("span");
+      c.className = "confetti";
+      c.textContent = bits[Math.floor(Math.random() * bits.length)];
+      c.style.color = "#b8892b";
+      c.style.left = Math.random() * 100 + "vw";
+      c.style.fontSize = 14 + Math.random() * 18 + "px";
+      c.style.animationDuration = 3 + Math.random() * 3 + "s";
+      c.style.animationDelay = Math.random() * 0.8 + "s";
+      document.body.appendChild(c);
+      setTimeout(() => c.remove(), 7000);
+    }
+  }
+</script>
+
+</body>
+</html>
